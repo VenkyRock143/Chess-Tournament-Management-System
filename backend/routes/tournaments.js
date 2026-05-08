@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
 
+// Helper: shuffle array
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -11,6 +12,7 @@ function shuffle(arr) {
   return a;
 }
 
+// GET all tournaments
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
@@ -22,9 +24,10 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST create tournament
 router.post('/', async (req, res) => {
   const { name } = req.body;
-  if (!name) return res.status(400).json({ error: 'Tournament name is required' });
+  if (!name) return res.status(400).json({ error: 'Tournament name required' });
   try {
     const result = await pool.query(
       'INSERT INTO tournaments (name) VALUES ($1) RETURNING *',
@@ -36,14 +39,17 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET tournament by ID (with players and matches)
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const tournament = await pool.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
-    if (!tournament.rows.length)
+    if (!tournament.rows.length) {
       return res.status(404).json({ error: 'Tournament not found' });
+    }
 
     const players = await pool.query(
       `SELECT tp.*, p.name, p.email
@@ -56,9 +62,9 @@ router.get('/:id', async (req, res) => {
 
     const matches = await pool.query(
       `SELECT m.*,
-         p1.name AS player1_name,
-         p2.name AS player2_name,
-         w.name  AS winner_name
+         p1.name as player1_name,
+         p2.name as player2_name,
+         w.name as winner_name
        FROM matches m
        LEFT JOIN players p1 ON p1.id = m.player1_id
        LEFT JOIN players p2 ON p2.id = m.player2_id
@@ -78,28 +84,34 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// POST add player to tournament
 router.post('/:id/players', async (req, res) => {
   const { id } = req.params;
   const { player_id } = req.body;
-  if (!player_id) return res.status(400).json({ error: 'player_id is required' });
+  if (!player_id) return res.status(400).json({ error: 'player_id required' });
+
   try {
     const tournament = await pool.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (!tournament.rows.length)
       return res.status(404).json({ error: 'Tournament not found' });
+
     if (tournament.rows[0].status !== 'pending')
-      return res.status(400).json({ error: 'Cannot add players after tournament starts' });
+      return res.status(400).json({ error: 'Tournament already started' });
 
     const countRes = await pool.query(
-      'SELECT COUNT(*) FROM tournament_players WHERE tournament_id = $1', [id]
+      'SELECT COUNT(*) FROM tournament_players WHERE tournament_id = $1',
+      [id]
     );
     if (parseInt(countRes.rows[0].count) >= 10)
       return res.status(400).json({ error: 'Tournament already has 10 players' });
 
     const result = await pool.query(
       `INSERT INTO tournament_players (tournament_id, player_id)
-       VALUES ($1, $2) RETURNING *`,
+       VALUES ($1, $2)
+       RETURNING *`,
       [id, player_id]
     );
     res.status(201).json(result.rows[0]);
@@ -110,14 +122,17 @@ router.post('/:id/players', async (req, res) => {
   }
 });
 
+// DELETE player from tournament
 router.delete('/:id/players/:playerId', async (req, res) => {
   const { id, playerId } = req.params;
   try {
     const tournament = await pool.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (tournament.rows[0].status !== 'pending')
-      return res.status(400).json({ error: 'Cannot remove players after tournament starts' });
+      return res.status(400).json({ error: 'Cannot remove player after tournament starts' });
+
     await pool.query(
       'DELETE FROM tournament_players WHERE tournament_id = $1 AND player_id = $2',
       [id, playerId]
@@ -128,6 +143,7 @@ router.delete('/:id/players/:playerId', async (req, res) => {
   }
 });
 
+// POST start tournament & generate Round 1
 router.post('/:id/start', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -135,39 +151,47 @@ router.post('/:id/start', async (req, res) => {
     await client.query('BEGIN');
 
     const tournament = await client.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (!tournament.rows.length)
       return res.status(404).json({ error: 'Tournament not found' });
+
     if (tournament.rows[0].status !== 'pending')
       return res.status(400).json({ error: 'Tournament already started' });
 
-    const countRes = await client.query(
-      'SELECT COUNT(*) FROM tournament_players WHERE tournament_id = $1', [id]
+    const playerCount = await client.query(
+      'SELECT COUNT(*) FROM tournament_players WHERE tournament_id = $1',
+      [id]
     );
-    if (parseInt(countRes.rows[0].count) !== 10)
+    if (parseInt(playerCount.rows[0].count) !== 10)
       return res.status(400).json({ error: 'Exactly 10 players required to start' });
 
+    // Update tournament status
     await client.query(
-      `UPDATE tournaments SET status = 'active', current_round = 1 WHERE id = $1`, [id]
+      "UPDATE tournaments SET status = 'active', current_round = 1 WHERE id = $1",
+      [id]
     );
 
+    // Get all player IDs and shuffle
     const playersRes = await client.query(
-      'SELECT player_id FROM tournament_players WHERE tournament_id = $1', [id]
+      'SELECT player_id FROM tournament_players WHERE tournament_id = $1',
+      [id]
     );
     const playerIds = shuffle(playersRes.rows.map(r => r.player_id));
 
-    const inserts = [];
+    // Generate Round 1: 5 matches for 10 players
+    const matchInserts = [];
     for (let i = 0; i < playerIds.length; i += 2) {
-      inserts.push(
+      matchInserts.push(
         client.query(
           `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
-           VALUES ($1, 1, $2, $3)`,
-          [id, playerIds[i], playerIds[i + 1]]
+           VALUES ($1, $2, $3, $4)`,
+          [id, 1, playerIds[i], playerIds[i + 1]]
         )
       );
     }
-    await Promise.all(inserts);
+    await Promise.all(matchInserts);
 
     await client.query('COMMIT');
     res.json({ message: 'Tournament started! Round 1 generated.' });
@@ -179,6 +203,7 @@ router.post('/:id/start', async (req, res) => {
   }
 });
 
+// POST complete all pending matches in current round (random winners)
 router.post('/:id/complete-round', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -186,47 +211,60 @@ router.post('/:id/complete-round', async (req, res) => {
     await client.query('BEGIN');
 
     const tournament = await client.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (!tournament.rows.length)
       return res.status(404).json({ error: 'Tournament not found' });
-    if (tournament.rows[0].status !== 'active')
+
+    const { status, current_round } = tournament.rows[0];
+    if (status !== 'active')
       return res.status(400).json({ error: 'Tournament is not active' });
 
-    const { current_round } = tournament.rows[0];
-
+    // Get pending matches this round
     const pendingRes = await client.query(
       `SELECT * FROM matches
        WHERE tournament_id = $1 AND round = $2 AND status = 'pending'`,
       [id, current_round]
     );
+
     if (!pendingRes.rows.length)
-      return res.status(400).json({ error: 'No pending matches in this round' });
+      return res.status(400).json({ error: 'No pending matches in current round' });
 
     for (const match of pendingRes.rows) {
       let winnerId, loserId;
 
       if (match.is_bye) {
+        // Bye match — player1 auto-advances, no loser
         winnerId = match.player1_id;
-        loserId  = null;
+        loserId = null;
       } else {
-        const flip = Math.random() < 0.5;
-        winnerId = flip ? match.player1_id : match.player2_id;
-        loserId  = flip ? match.player2_id : match.player1_id;
+        // Randomly select winner between player1 and player2
+        const coinFlip = Math.random() < 0.5;
+        winnerId = coinFlip ? match.player1_id : match.player2_id;
+        loserId = coinFlip ? match.player2_id : match.player1_id;
       }
 
+      // Mark match completed
       await client.query(
-        `UPDATE matches SET winner_id = $1, status = 'completed' WHERE id = $2`,
+        `UPDATE matches SET winner_id = $1, status = 'completed'
+         WHERE id = $2`,
         [winnerId, match.id]
       );
+
+      // Update winner's wins
       await client.query(
-        `UPDATE tournament_players SET wins = wins + 1
+        `UPDATE tournament_players
+         SET wins = wins + 1
          WHERE tournament_id = $1 AND player_id = $2`,
         [id, winnerId]
       );
+
+      // Update loser's losses and disqualify them
       if (loserId) {
         await client.query(
-          `UPDATE tournament_players SET losses = losses + 1, status = 'disqualified'
+          `UPDATE tournament_players
+           SET losses = losses + 1, status = 'disqualified'
            WHERE tournament_id = $1 AND player_id = $2`,
           [id, loserId]
         );
@@ -234,7 +272,7 @@ router.post('/:id/complete-round', async (req, res) => {
     }
 
     await client.query('COMMIT');
-    res.json({ message: `Round ${current_round} completed with random winners.` });
+    res.json({ message: `Round ${current_round} completed with random winners selected.` });
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).json({ error: err.message });
@@ -243,6 +281,7 @@ router.post('/:id/complete-round', async (req, res) => {
   }
 });
 
+// POST generate next round
 router.post('/:id/next-round', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -250,135 +289,78 @@ router.post('/:id/next-round', async (req, res) => {
     await client.query('BEGIN');
 
     const tournament = await client.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (!tournament.rows.length)
       return res.status(404).json({ error: 'Tournament not found' });
-    if (tournament.rows[0].status !== 'active')
+
+    const { status, current_round } = tournament.rows[0];
+    if (status !== 'active')
       return res.status(400).json({ error: 'Tournament is not active' });
 
-    const { current_round } = tournament.rows[0];
-
-    const pending = await client.query(
+    // Ensure all matches in current round are completed
+    const pendingCheck = await client.query(
       `SELECT COUNT(*) FROM matches
        WHERE tournament_id = $1 AND round = $2 AND status = 'pending'`,
       [id, current_round]
     );
-    if (parseInt(pending.rows[0].count) > 0)
+    if (parseInt(pendingCheck.rows[0].count) > 0)
       return res.status(400).json({ error: 'Complete all matches before generating next round' });
 
-    const nextRound = current_round + 1;
-
-    // ── Fixed 4-round bracket: 10→8→4→2→1 player structure ──────────────
-    // Round 1 (5 matches): all 10 play.
-    // After Round 1: 5 winners advance automatically. To reach 8 players for
-    // Round 2 (4 matches), 3 wild-card spots are granted to randomly chosen
-    // losers from Round 1. The remaining 2 losers are disqualified.
-    // Round 2 (4 matches): 8 players → 4 winners.
-    // Round 3 (2 matches, semi-finals): 4 players → 2 winners.
-    // Round 4 (1 match, final): 2 players → champion.
-
-    if (current_round === 1) {
-      // Get the 5 Round-1 winners (already marked 'active')
-      const winnersRes = await client.query(
-        `SELECT player_id FROM tournament_players
-         WHERE tournament_id = $1 AND status = 'active'`,
-        [id]
-      );
-      const winnerIds = winnersRes.rows.map(r => r.player_id);
-
-      // Get the 5 Round-1 losers (marked 'disqualified' by complete-round)
-      const losersRes = await client.query(
-        `SELECT player_id FROM tournament_players
-         WHERE tournament_id = $1 AND status = 'disqualified'
-         ORDER BY RANDOM()`,
-        [id]
-      );
-      const loserIds = losersRes.rows.map(r => r.player_id);
-
-      // Give 3 wild-card spots to randomly selected losers
-      const wildCards = loserIds.slice(0, 3);
-      const eliminated = loserIds.slice(3); // remaining 2 stay disqualified
-
-      // Re-activate the 3 wild-card players
-      for (const pid of wildCards) {
-        await client.query(
-          `UPDATE tournament_players SET status = 'active'
-           WHERE tournament_id = $1 AND player_id = $2`,
-          [id, pid]
-        );
-      }
-      // Keep the 2 eliminated players disqualified (no change needed)
-      // Confirm the 2 eliminated are still disqualified
-      for (const pid of eliminated) {
-        await client.query(
-          `UPDATE tournament_players SET status = 'disqualified'
-           WHERE tournament_id = $1 AND player_id = $2`,
-          [id, pid]
-        );
-      }
-
-      // Build Round 2 with all 8 active players (5 winners + 3 wild-cards)
-      const round2Players = shuffle([...winnerIds, ...wildCards]);
-      await client.query(
-        'UPDATE tournaments SET current_round = $1 WHERE id = $2',
-        [nextRound, id]
-      );
-
-      const inserts = [];
-      for (let i = 0; i < round2Players.length; i += 2) {
-        inserts.push(
-          client.query(
-            `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
-             VALUES ($1, $2, $3, $4)`,
-            [id, nextRound, round2Players[i], round2Players[i + 1]]
-          )
-        );
-      }
-      await Promise.all(inserts);
-
-      await client.query('COMMIT');
-      return res.json({
-        message: `Round 2 generated! 5 winners + 3 wild-card players advance (${eliminated.length} eliminated).`,
-      });
-    }
-
-    // Rounds 2, 3, 4: strict single-elimination from here
+    // Get active players (not disqualified)
     const activeRes = await client.query(
       `SELECT player_id FROM tournament_players
-       WHERE tournament_id = $1 AND status = 'active'`,
+       WHERE tournament_id = $1 AND status = 'active'
+       ORDER BY RANDOM()`,
       [id]
     );
-    const active = activeRes.rows.map(r => r.player_id);
+    const activePlayers = activeRes.rows.map(r => r.player_id);
 
-    if (active.length <= 1) {
+    if (activePlayers.length <= 1) {
+      // Tournament is over
       await client.query(
-        `UPDATE tournaments SET status = 'completed' WHERE id = $1`, [id]
+        "UPDATE tournaments SET status = 'completed' WHERE id = $1",
+        [id]
       );
       await client.query('COMMIT');
-      return res.json({ message: 'Tournament complete! Check results.', completed: true });
+      return res.json({ message: 'Tournament completed! Check results.', completed: true });
     }
 
+    const nextRound = current_round + 1;
     await client.query(
       'UPDATE tournaments SET current_round = $1 WHERE id = $2',
       [nextRound, id]
     );
 
-    const shuffled = shuffle(active);
-    const inserts = [];
-    for (let i = 0; i < shuffled.length; i += 2) {
-      inserts.push(
-        client.query(
-          `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
-           VALUES ($1, $2, $3, $4)`,
-          [id, nextRound, shuffled[i], shuffled[i + 1]]
-        )
-      );
-    }
-    await Promise.all(inserts);
+    const shuffled = shuffle(activePlayers);
+    const matchInserts = [];
 
+    for (let i = 0; i < shuffled.length; i += 2) {
+      if (i + 1 < shuffled.length) {
+        // Normal match
+        matchInserts.push(
+          client.query(
+            `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
+             VALUES ($1, $2, $3, $4)`,
+            [id, nextRound, shuffled[i], shuffled[i + 1]]
+          )
+        );
+      } else {
+        // Odd player out — bye match
+        matchInserts.push(
+          client.query(
+            `INSERT INTO matches (tournament_id, round, player1_id, is_bye)
+             VALUES ($1, $2, $3, TRUE)`,
+            [id, nextRound, shuffled[i]]
+          )
+        );
+      }
+    }
+
+    await Promise.all(matchInserts);
     await client.query('COMMIT');
-    res.json({ message: `Round ${nextRound} generated!` });
+    res.json({ message: `Round ${nextRound} generated!`, round: nextRound });
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).json({ error: err.message });
@@ -387,64 +369,88 @@ router.post('/:id/next-round', async (req, res) => {
   }
 });
 
+// GET tournament results / rankings
 router.get('/:id/results', async (req, res) => {
   const { id } = req.params;
   try {
     const tournament = await pool.query(
-      'SELECT * FROM tournaments WHERE id = $1', [id]
+      'SELECT * FROM tournaments WHERE id = $1',
+      [id]
     );
     if (!tournament.rows.length)
       return res.status(404).json({ error: 'Tournament not found' });
 
+    if (tournament.rows[0].status !== 'completed')
+      return res.status(400).json({ error: 'Tournament is not completed yet' });
+
+    // All players ranked by wins desc, losses asc
     const players = await pool.query(
       `SELECT tp.*, p.name, p.email
        FROM tournament_players tp
        JOIN players p ON p.id = tp.player_id
        WHERE tp.tournament_id = $1
-       ORDER BY tp.wins DESC, tp.losses ASC`,
+       ORDER BY tp.wins DESC, tp.losses ASC, tp.status ASC`,
       [id]
     );
+
     const rows = players.rows;
 
+    // Champion: the one remaining active player
     const champion = rows.find(p => p.status === 'active') || rows[0];
 
-    const finalRound = tournament.rows[0].current_round;
+    // Find the actual final match (last completed non-bye match in the highest round)
     const finalMatchRes = await pool.query(
       `SELECT * FROM matches
-       WHERE tournament_id = $1 AND round = $2
-         AND status = 'completed' AND is_bye = FALSE`,
-      [id, finalRound]
+       WHERE tournament_id = $1 AND status = 'completed' AND is_bye = FALSE
+       ORDER BY round DESC, id DESC
+       LIMIT 1`,
+      [id]
     );
 
     let runnerUp = null;
     if (finalMatchRes.rows.length) {
-      const last = finalMatchRes.rows[finalMatchRes.rows.length - 1];
+      const finalMatch = finalMatchRes.rows[0];
       const loserId =
-        last.winner_id === last.player1_id ? last.player2_id : last.player1_id;
-      runnerUp = rows.find(p => p.player_id === loserId);
+        finalMatch.winner_id === finalMatch.player1_id
+          ? finalMatch.player2_id
+          : finalMatch.player1_id;
+      runnerUp = rows.find(p => p.player_id === loserId) || null;
     }
 
+    // Third place: find all semi-final losers (round before the final match round)
     let thirdPlace = null;
-    if (finalRound > 1) {
-      const semiRes = await pool.query(
-        `SELECT * FROM matches
-         WHERE tournament_id = $1 AND round = $2
-           AND status = 'completed' AND is_bye = FALSE`,
-        [id, finalRound - 1]
-      );
-      const semiLosers = semiRes.rows.map(m =>
-        m.winner_id === m.player1_id ? m.player2_id : m.player1_id
-      );
-      const candidates = rows.filter(p => semiLosers.includes(p.player_id));
-      if (candidates.length) {
-        thirdPlace = candidates.sort((a, b) => b.wins - a.wins)[0];
+    if (finalMatchRes.rows.length) {
+      const finalRound = finalMatchRes.rows[0].round;
+      if (finalRound > 1) {
+        const semiMatches = await pool.query(
+          `SELECT * FROM matches
+           WHERE tournament_id = $1 AND round = $2 AND status = 'completed' AND is_bye = FALSE`,
+          [id, finalRound - 1]
+        );
+        const semiLosers = semiMatches.rows.map(m =>
+          m.winner_id === m.player1_id ? m.player2_id : m.player1_id
+        );
+        // Exclude champion and runner-up; pick the one with most wins
+        const candidates = rows.filter(
+          p =>
+            semiLosers.includes(p.player_id) &&
+            p.player_id !== champion?.player_id &&
+            p.player_id !== runnerUp?.player_id
+        );
+        if (candidates.length) {
+          thirdPlace = candidates.sort((a, b) => b.wins - a.wins)[0];
+        }
       }
     }
 
     res.json({
       tournament: tournament.rows[0],
       rankings: rows,
-      podium: { first: champion || null, second: runnerUp || null, third: thirdPlace || null },
+      podium: {
+        first: champion || null,
+        second: runnerUp || null,
+        third: thirdPlace || null,
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

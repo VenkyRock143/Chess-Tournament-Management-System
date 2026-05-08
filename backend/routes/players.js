@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
 
+// GET all players
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
@@ -13,6 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST create player
 router.post('/', async (req, res) => {
   const { name, email } = req.body;
   if (!name || !email) {
@@ -26,36 +28,28 @@ router.post('/', async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (err) {
     if (err.code === '23505') {
-      return res.status(400).json({ error: 'A player with this email already exists' });
+      return res.status(400).json({ error: 'Email already exists' });
     }
     res.status(500).json({ error: err.message });
   }
 });
 
-router.put('/:id', async (req, res) => {
-  const { name, email } = req.body;
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
-  }
-  try {
-    const result = await pool.query(
-      'UPDATE players SET name = $1, email = $2 WHERE id = $3 RETURNING *',
-      [name.trim(), email.trim().toLowerCase(), req.params.id]
-    );
-    if (!result.rows.length) {
-      return res.status(404).json({ error: 'Player not found' });
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    if (err.code === '23505') {
-      return res.status(400).json({ error: 'A player with this email already exists' });
-    }
-    res.status(500).json({ error: err.message });
-  }
-});
-
+// DELETE player
 router.delete('/:id', async (req, res) => {
   try {
+    // Prevent deletion if player is part of any non-pending tournament
+    const activeCheck = await pool.query(
+      `SELECT t.name FROM tournament_players tp
+       JOIN tournaments t ON t.id = tp.tournament_id
+       WHERE tp.player_id = $1 AND t.status != 'pending'
+       LIMIT 1`,
+      [req.params.id]
+    );
+    if (activeCheck.rows.length > 0) {
+      return res.status(400).json({
+        error: `Cannot delete player: they are part of an active or completed tournament ("${activeCheck.rows[0].name}").`,
+      });
+    }
     await pool.query('DELETE FROM players WHERE id = $1', [req.params.id]);
     res.json({ message: 'Player deleted' });
   } catch (err) {
