@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
 
-// Helper: shuffle array
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
