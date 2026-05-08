@@ -1,6 +1,7 @@
-// Base URL prefix for all API calls
-// Vite proxies /api → http://localhost:5000 during development
-const BASE = '/api';
+// In development, Vite proxies /api → localhost:5000
+// In production (Netlify), VITE_API_URL must be set to your deployed backend URL
+// e.g. https://chess-tournament-api.onrender.com/api
+const BASE = import.meta.env.VITE_API_URL || '/api';
 
 // ── Core Request Helper ──────────────────────────────────
 // All API calls go through this one function.

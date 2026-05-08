@@ -8,7 +8,10 @@ const tournamentsRouter = require('./routes/tournaments');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 app.use('/api/players', playersRouter);
 app.use('/api/tournaments', tournamentsRouter);
