@@ -32,6 +32,28 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE players SET name = $1, email = $2 WHERE id = $3 RETURNING *',
+      [name.trim(), email.trim().toLowerCase(), req.params.id]
+    );
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(400).json({ error: 'A player with this email already exists' });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM players WHERE id = $1', [req.params.id]);

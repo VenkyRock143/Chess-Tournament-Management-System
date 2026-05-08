@@ -267,10 +267,86 @@ router.post('/:id/next-round', async (req, res) => {
     if (parseInt(pending.rows[0].count) > 0)
       return res.status(400).json({ error: 'Complete all matches before generating next round' });
 
+    const nextRound = current_round + 1;
+
+    // ── Fixed 4-round bracket: 10→8→4→2→1 player structure ──────────────
+    // Round 1 (5 matches): all 10 play.
+    // After Round 1: 5 winners advance automatically. To reach 8 players for
+    // Round 2 (4 matches), 3 wild-card spots are granted to randomly chosen
+    // losers from Round 1. The remaining 2 losers are disqualified.
+    // Round 2 (4 matches): 8 players → 4 winners.
+    // Round 3 (2 matches, semi-finals): 4 players → 2 winners.
+    // Round 4 (1 match, final): 2 players → champion.
+
+    if (current_round === 1) {
+      // Get the 5 Round-1 winners (already marked 'active')
+      const winnersRes = await client.query(
+        `SELECT player_id FROM tournament_players
+         WHERE tournament_id = $1 AND status = 'active'`,
+        [id]
+      );
+      const winnerIds = winnersRes.rows.map(r => r.player_id);
+
+      // Get the 5 Round-1 losers (marked 'disqualified' by complete-round)
+      const losersRes = await client.query(
+        `SELECT player_id FROM tournament_players
+         WHERE tournament_id = $1 AND status = 'disqualified'
+         ORDER BY RANDOM()`,
+        [id]
+      );
+      const loserIds = losersRes.rows.map(r => r.player_id);
+
+      // Give 3 wild-card spots to randomly selected losers
+      const wildCards = loserIds.slice(0, 3);
+      const eliminated = loserIds.slice(3); // remaining 2 stay disqualified
+
+      // Re-activate the 3 wild-card players
+      for (const pid of wildCards) {
+        await client.query(
+          `UPDATE tournament_players SET status = 'active'
+           WHERE tournament_id = $1 AND player_id = $2`,
+          [id, pid]
+        );
+      }
+      // Keep the 2 eliminated players disqualified (no change needed)
+      // Confirm the 2 eliminated are still disqualified
+      for (const pid of eliminated) {
+        await client.query(
+          `UPDATE tournament_players SET status = 'disqualified'
+           WHERE tournament_id = $1 AND player_id = $2`,
+          [id, pid]
+        );
+      }
+
+      // Build Round 2 with all 8 active players (5 winners + 3 wild-cards)
+      const round2Players = shuffle([...winnerIds, ...wildCards]);
+      await client.query(
+        'UPDATE tournaments SET current_round = $1 WHERE id = $2',
+        [nextRound, id]
+      );
+
+      const inserts = [];
+      for (let i = 0; i < round2Players.length; i += 2) {
+        inserts.push(
+          client.query(
+            `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
+             VALUES ($1, $2, $3, $4)`,
+            [id, nextRound, round2Players[i], round2Players[i + 1]]
+          )
+        );
+      }
+      await Promise.all(inserts);
+
+      await client.query('COMMIT');
+      return res.json({
+        message: `Round 2 generated! 5 winners + 3 wild-card players advance (${eliminated.length} eliminated).`,
+      });
+    }
+
+    // Rounds 2, 3, 4: strict single-elimination from here
     const activeRes = await client.query(
       `SELECT player_id FROM tournament_players
-       WHERE tournament_id = $1 AND status = 'active'
-       ORDER BY RANDOM()`,
+       WHERE tournament_id = $1 AND status = 'active'`,
       [id]
     );
     const active = activeRes.rows.map(r => r.player_id);
@@ -283,7 +359,6 @@ router.post('/:id/next-round', async (req, res) => {
       return res.json({ message: 'Tournament complete! Check results.', completed: true });
     }
 
-    const nextRound = current_round + 1;
     await client.query(
       'UPDATE tournaments SET current_round = $1 WHERE id = $2',
       [nextRound, id]
@@ -292,23 +367,13 @@ router.post('/:id/next-round', async (req, res) => {
     const shuffled = shuffle(active);
     const inserts = [];
     for (let i = 0; i < shuffled.length; i += 2) {
-      if (i + 1 < shuffled.length) {
-        inserts.push(
-          client.query(
-            `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
-             VALUES ($1, $2, $3, $4)`,
-            [id, nextRound, shuffled[i], shuffled[i + 1]]
-          )
-        );
-      } else {
-        inserts.push(
-          client.query(
-            `INSERT INTO matches (tournament_id, round, player1_id, is_bye)
-             VALUES ($1, $2, $3, TRUE)`,
-            [id, nextRound, shuffled[i]]
-          )
-        );
-      }
+      inserts.push(
+        client.query(
+          `INSERT INTO matches (tournament_id, round, player1_id, player2_id)
+           VALUES ($1, $2, $3, $4)`,
+          [id, nextRound, shuffled[i], shuffled[i + 1]]
+        )
+      );
     }
     await Promise.all(inserts);
 

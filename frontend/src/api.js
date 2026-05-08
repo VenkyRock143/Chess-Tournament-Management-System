@@ -27,6 +27,10 @@ export const getPlayers = () =>
 export const createPlayer = (body) =>
   request('/players', { method: 'POST', body: JSON.stringify(body) });
 
+// Update an existing player's name and/or email
+export const updatePlayer = (id, body) =>
+  request(`/players/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+
 // Delete a player by their ID
 export const deletePlayer = (id) =>
   request(`/players/${id}`, { method: 'DELETE' });

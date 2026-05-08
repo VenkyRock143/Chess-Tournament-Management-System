@@ -292,3 +292,7 @@ body {
   .podium               { flex-direction: column; align-items: center; }
   .podium-step.first    { transform: none; }
 }
+/* ── Inline Edit Row ─────────────────────────────────── */
+.input-sm     { padding: 0.3rem 0.6rem; font-size: 0.875rem; width: 100%; }
+.action-cell  { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+.edit-row td  { background: #f8f9fa; }
