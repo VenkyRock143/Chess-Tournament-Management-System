@@ -9,7 +9,15 @@ const tournamentsRouter = require('./routes/tournaments');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL]
+  : true;
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 app.use('/api/players', playersRouter);
