@@ -9,8 +9,8 @@ const tournamentsRouter = require('./routes/tournaments');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL]
+const allowedOrigins = https://chess-tournament-management-system.vercel.app/
+  ? [https://chess-tournament-management-system.vercel.app/]
   : true;
 
 app.use(cors({
