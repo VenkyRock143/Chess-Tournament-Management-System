@@ -2,6 +2,7 @@
 
 A full-stack web application for managing chess tournaments — create player profiles, run 4-round single-elimination tournaments for 10 players, randomly select match winners, track performance, disqualify losers, and display a final podium with rankings.
 
+🌐 **Live:** [https://chess-tournament-management-system.vercel.app]
 ---
 
 ## Tech Stack
