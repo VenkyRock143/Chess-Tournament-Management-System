@@ -1,0 +1,11 @@
+/* ==========================================
+   Chess Tournament Manager
+   Main stylesheet
+
+   This file only imports the other CSS files.
+   ========================================== */
+
+@import "./base.css";
+@import "./components.css";
+@import "./pages.css";
+@import "./responsive.css";

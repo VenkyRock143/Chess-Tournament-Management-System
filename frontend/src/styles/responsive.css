@@ -1,0 +1,198 @@
+/* Mobile */
+
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  /* Navbar */
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+
+  .navbar-links,
+  .nav-links {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .navbar-links a,
+  .nav-links a {
+    padding: 8px 12px;
+  }
+
+  /* Forms */
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input,
+  .btn {
+    width: 100%;
+  }
+
+  /* Tables */
+
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Tournament cards */
+
+  .tournament-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .tournament-info {
+    width: 100%;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-group {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-group .btn {
+    width: 100%;
+  }
+
+  /* Home */
+
+  .hero {
+    padding: 40px 20px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  /* Podium */
+
+  .podium {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .podium-step {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .podium-step.first {
+    transform: none;
+  }
+
+  .podium-box {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .podium-box.first {
+    transform: none;
+  }
+
+  .home-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .home-buttons .btn {
+    width: 100%;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small phones */
+
+@media (max-width: 480px) {
+  .main {
+    padding: 16px 12px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .hero {
+    padding: 32px 18px;
+  }
+
+  .hero-icon {
+    font-size: 42px;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .feature-card {
+    padding: 18px;
+  }
+
+  .feature-icon {
+    font-size: 30px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px;
+  }
+
+  .btn {
+    font-size: 14px;
+  }
+
+  .badge {
+    font-size: 10px;
+  }
+}

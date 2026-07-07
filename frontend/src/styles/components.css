@@ -1,0 +1,891 @@
+/* ==========================================
+   Navigation
+========================================== */
+
+.navbar {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #dcdcdc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-links a {
+  color: #555;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.navbar-links a:hover {
+  background: #eef3ff;
+  color: #1e3a8a;
+}
+
+.navbar-links .active {
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+/* ==========================================
+   Cards
+========================================== */
+
+.card {
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.card h3 {
+  margin-bottom: 18px;
+  font-size: 18px;
+  color: #222;
+}
+
+.card + .card {
+  margin-top: 20px;
+}
+
+/* ==========================================
+   Buttons
+========================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+}
+
+.btn-primary {
+  background: #1e40af;
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #18368f;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border: 1px solid #1e40af;
+  color: #1e40af;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #eef3ff;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-sm {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.btn-lg {
+  padding: 12px 22px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ==========================================
+   Forms
+========================================== */
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  background: #ffffff;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #2563eb;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+textarea.input {
+  resize: vertical;
+}
+/* ==========================================
+   Alerts
+========================================== */
+
+.alert {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background: #edf7ee;
+  border: 1px solid #8fd19e;
+  color: #1d6b33;
+}
+
+.alert-error {
+  background: #fdeeee;
+  border: 1px solid #e5a0a0;
+  color: #b42318;
+}
+
+/* ==========================================
+   Tables
+========================================== */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th {
+  background: #f5f5f5;
+  color: #555;
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid #dddddd;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 14px;
+}
+
+.table tbody tr:hover {
+  background: #fafafa;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   Match Table
+========================================== */
+
+.vs-cell {
+  width: 60px;
+  text-align: center;
+  color: #888;
+  font-weight: 600;
+}
+
+.winner-cell {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.winner-label {
+  color: #ca8a04;
+  font-weight: 600;
+}
+
+.disqualified-row {
+  opacity: 0.55;
+}
+
+/* ==========================================
+   Status Badges
+========================================== */
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: #fff8db;
+  color: #946200;
+  border: 1px solid #efd27a;
+}
+
+.badge-active {
+  background: #e8f7ec;
+  color: #1d6b33;
+  border: 1px solid #9ad3ab;
+}
+
+.badge-completed {
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #b7c2ff;
+}
+
+.badge-disqualified {
+  background: #fdecec;
+  color: #b42318;
+  border: 1px solid #efb0b0;
+}
+
+/* ==========================================
+   Empty State
+========================================== */
+
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+
+/* ==========================================
+   Loading
+========================================== */
+
+.loading {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* ==========================================
+   Breadcrumb
+========================================== */
+
+.breadcrumb {
+  margin-bottom: 18px;
+}
+
+.breadcrumb a {
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   Tournament Header
+========================================== */
+
+.tournament-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.round-chip {
+  background: #eef2ff;
+  color: #1e40af;
+  border: 1px solid #bfd0ff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+/* ==========================================
+   Section Header
+========================================== */
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.section-header h3 {
+  margin: 0;
+}
+
+/* ==========================================
+   Action Area
+========================================== */
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.hint {
+  color: #555;
+  font-size: 14px;
+}
+
+/* ==========================================
+   Tournament List
+========================================== */
+
+.tournament-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tournament-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.tournament-item:hover {
+  border-color: #2563eb;
+}
+
+.tournament-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tournament-info h4 {
+  font-size: 17px;
+  color: #222;
+}
+
+.round-info {
+  font-size: 13px;
+  color: #666;
+}
+
+.date {
+  font-size: 13px;
+  color: #888;
+}
+
+/* ==========================================
+   Leaderboard
+========================================== */
+
+.leaderboard-title {
+  margin-bottom: 16px;
+}
+
+.leaderboard table td:first-child {
+  font-weight: 600;
+}
+
+.leaderboard table td {
+  vertical-align: middle;
+}
+
+/* ==========================================
+   Podium
+========================================== */
+
+.podium-card {
+  text-align: center;
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.podium-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160px;
+  padding: 18px;
+  border-radius: 8px;
+}
+
+.podium-step.first {
+  background: #fff7db;
+  border: 2px solid #d4a017;
+  order: 2;
+}
+
+.podium-step.second {
+  background: #f5f5f5;
+  border: 2px solid #9ca3af;
+  order: 1;
+}
+
+.podium-step.third {
+  background: #fef1e6;
+  border: 2px solid #c97a3d;
+  order: 3;
+}
+
+.podium-medal {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.podium-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.podium-stats {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.podium-rank {
+  font-size: 12px;
+  color: #888;
+  font-weight: 600;
+}
+
+/* ==========================================
+   Common Utility Classes
+========================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.w-100 {
+  width: 100%;
+}
+/* ==========================================
+   Card Helpers
+========================================== */
+
+.card h2 {
+  font-size: 22px;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.card p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   Table Helpers
+========================================== */
+
+.table td strong,
+.table th strong {
+  color: #222;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+/* ==========================================
+   Form Helpers
+========================================== */
+
+.input::placeholder {
+  color: #999;
+}
+
+.input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   Button Helpers
+========================================== */
+
+.btn {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   Badge Helpers
+========================================== */
+
+.badge {
+  white-space: nowrap;
+}
+
+/* ==========================================
+   Tournament Components
+========================================== */
+
+.tournament-header h2 {
+  font-size: 24px;
+  color: #222;
+}
+
+.action-bar .btn {
+  min-width: 180px;
+}
+
+.section-header .btn-group {
+  justify-content: flex-end;
+}
+
+/* ==========================================
+   Podium Improvements
+========================================== */
+
+.podium-step {
+  transition: transform 0.2s ease;
+}
+
+.podium-step:hover {
+  transform: translateY(-4px);
+}
+
+.podium-step.first:hover {
+  transform: translateY(-8px);
+}
+
+/* ==========================================
+   Scrollable Tables
+========================================== */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* ==========================================
+   Utility Classes
+========================================== */
+
+.text-muted {
+  color: #777;
+}
+
+.text-success {
+  color: #15803d;
+}
+
+.text-danger {
+  color: #dc2626;
+}
+
+.text-warning {
+  color: #ca8a04;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+/* ==========================================
+   Misc
+========================================== */
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 20px 0;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+/* ==========================================
+   Back Link
+========================================== */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   Nav Links
+========================================== */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-links a {
+  color: #555;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.nav-links a:hover {
+  background: #eef3ff;
+  color: #1e3a8a;
+}
+
+.nav-links .active {
+  background: #1e40af;
+  color: #ffffff;
+}
+
+.navbar h2 {
+  font-size: 20px;
+  color: #1e3a8a;
+}
+
+/* ==========================================
+   Delete Button
+========================================== */
+
+.delete-btn {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+/* ==========================================
+   Home Page
+========================================== */
+
+.home-card {
+  text-align: center;
+  padding: 40px 30px;
+}
+
+.home-card h1 {
+  font-size: 30px;
+  margin-bottom: 12px;
+  color: #1f2937;
+}
+
+.home-card p {
+  color: #666666;
+  margin-bottom: 22px;
+}
+
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.home-features .card h3 {
+  font-size: 18px;
+}
+
+.home-features .card p {
+  font-size: 14px;
+}
+
+/* ==========================================
+   Podium Box
+========================================== */
+
+.podium-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 170px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.podium-box:hover {
+  transform: translateY(-4px);
+}
+
+.podium-box.first {
+  background: #fff8dc;
+  border: 2px solid #eab308;
+  order: 2;
+}
+
+.podium-box.second {
+  background: #f3f4f6;
+  border: 2px solid #9ca3af;
+  order: 1;
+}
+
+.podium-box.third {
+  background: #fff1e6;
+  border: 2px solid #b45309;
+  order: 3;
+}
+
+.podium-box h2 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.podium-box h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.podium-box p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+/* ==========================================
+   Wildcard Tag
+========================================== */
+
+.wildcard-tag {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+
+/* ==========================================
+   End of Components
+========================================== */

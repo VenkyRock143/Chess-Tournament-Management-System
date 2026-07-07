@@ -1,0 +1,89 @@
+/* ==========================================
+   Global Styles
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  background-color: #f4f6f9;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ==========================================
+   Links
+   ========================================== */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* ==========================================
+   Form Elements
+   ========================================== */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   Images
+   ========================================== */
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ==========================================
+   Lists
+   ========================================== */
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* ==========================================
+   Tables
+   ========================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ==========================================
+   Utility
+   ========================================== */
+
+.hidden {
+  display: none;
+}
