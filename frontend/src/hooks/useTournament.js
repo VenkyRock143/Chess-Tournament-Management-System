@@ -1,128 +1,190 @@
 import { useEffect, useState } from "react";
 
 import {
-  getTournament,
-  getTournamentResults,
-  addPlayerToTournament,
-  removePlayerFromTournament,
-  startTournament,
-  completeRound,
-  nextRound,
+
+    getTournament,
+
+    getTournamentResults,
+
+    addPlayerToTournament,
+
+    removePlayerFromTournament,
+
+    startTournament,
+
+    completeRound,
+
+    nextRound
+
 } from "../api/tournamentApi";
 
-import { TOURNAMENT_STATUS } from "../utils/constants";
+import {
+
+    TOURNAMENT_STATUS
+
+} from "../utils/constants";
+
 
 function useTournament(tournamentId) {
-  const [tournament, setTournament] = useState(null);
 
-  const [players, setPlayers] = useState([]);
+    const [tournament, setTournament] = useState(null);
 
-  const [matches, setMatches] = useState([]);
+    const [players, setPlayers] = useState([]);
 
-  const [results, setResults] = useState(null);
+    const [matches, setMatches] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+    const [results, setResults] = useState(null);
 
-  const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
 
-  async function loadTournament() {
-    setLoading(true);
+    const [error, setError] = useState("");
 
-    setError("");
 
-    try {
-      const data = await getTournament(tournamentId);
 
-      setTournament(data.tournament);
+    async function loadTournament() {
 
-      setPlayers(data.players);
+        setLoading(true);
 
-      setMatches(data.matches);
+        setError("");
 
-      if (data.tournament.status === TOURNAMENT_STATUS.COMPLETED) {
-        const result = await getTournamentResults(tournamentId);
+        try {
 
-        setResults(result);
-      } else {
-        setResults(null);
-      }
-    } catch (error) {
-      setError(error.message);
+            const data = await getTournament(tournamentId);
+
+            setTournament(data.tournament);
+
+            setPlayers(data.players);
+
+            setMatches(data.matches);
+
+
+
+            if (data.tournament.status === TOURNAMENT_STATUS.COMPLETED) {
+
+                const result = await getTournamentResults(tournamentId);
+
+                setResults(result);
+
+            } else {
+
+                setResults(null);
+
+            }
+
+        } catch (error) {
+
+            setError(error.message);
+
+        }
+
+        setLoading(false);
+
     }
 
-    setLoading(false);
-  }
 
-  useEffect(
-    function () {
-      loadTournament();
-    },
-    [tournamentId],
-  );
 
-  async function addPlayer(playerId) {
-    await addPlayerToTournament(
-      tournamentId,
+    useEffect(function () {
 
-      playerId,
-    );
+        loadTournament();
 
-    loadTournament();
-  }
+    }, [tournamentId]);
 
-  async function removePlayer(playerId) {
-    await removePlayerFromTournament(
-      tournamentId,
 
-      playerId,
-    );
 
-    loadTournament();
-  }
+    async function addPlayer(playerId) {
 
-  async function start() {
-    await startTournament(tournamentId);
+        await addPlayerToTournament(
 
-    loadTournament();
-  }
+            tournamentId,
 
-  async function finishRound() {
-    await completeRound(tournamentId);
+            playerId
 
-    loadTournament();
-  }
+        );
 
-  async function goToNextRound() {
-    await nextRound(tournamentId);
+        loadTournament();
 
-    loadTournament();
-  }
+    }
 
-  return {
-    tournament,
 
-    players,
 
-    matches,
+    async function removePlayer(playerId) {
 
-    results,
+        await removePlayerFromTournament(
 
-    loading,
+            tournamentId,
 
-    error,
+            playerId
 
-    actions: {
-      addPlayer,
+        );
 
-      removePlayer,
+        loadTournament();
 
-      start,
+    }
 
-      completeRound: finishRound,
 
-      nextRound: goToNextRound,
-    },
-  };
+
+    async function start() {
+
+        await startTournament(tournamentId);
+
+        loadTournament();
+
+    }
+
+
+
+    async function finishRound() {
+
+        await completeRound(tournamentId);
+
+        loadTournament();
+
+    }
+
+
+
+    async function goToNextRound() {
+
+        await nextRound(tournamentId);
+
+        loadTournament();
+
+    }
+
+
+
+    return {
+
+        tournament,
+
+        players,
+
+        matches,
+
+        results,
+
+        loading,
+
+        error,
+
+
+
+        actions: {
+
+            addPlayer,
+
+            removePlayer,
+
+            start,
+
+            completeRound: finishRound,
+
+            nextRound: goToNextRound
+
+        }
+
+    };
+
 }
 
 export default useTournament;

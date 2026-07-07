@@ -1,0 +1,650 @@
+/* styles.css - Chess Tournament Manager */
+
+
+/* ----------------------------------------
+   RESET
+---------------------------------------- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  background-color: #f5f5f5;
+  color: #222;
+  min-height: 100vh;
+}
+
+
+/* ----------------------------------------
+   NAV
+---------------------------------------- */
+
+.navbar {
+  background-color: #fff;
+  border-bottom: 2px solid #2c3e7a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e7a;
+  letter-spacing: 0.3px;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+}
+
+.navbar-links a {
+  display: block;
+  padding: 6px 14px;
+  border-radius: 4px;
+  color: #555;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.navbar-links a:hover {
+  background-color: #f0f2f8;
+  color: #222;
+}
+
+.navbar-links a.active {
+  background-color: #e8ecf8;
+  color: #2c3e7a;
+  font-weight: 600;
+}
+
+
+/* ----------------------------------------
+   LAYOUT
+---------------------------------------- */
+
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 20px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+}
+
+
+/* ----------------------------------------
+   CARD
+---------------------------------------- */
+
+.card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 14px;
+}
+
+
+/* ----------------------------------------
+   BUTTONS
+---------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #2c3e7a;
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #233168;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: #2c3e7a;
+  border: 1px solid #2c3e7a;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #f0f2f8;
+}
+
+.btn-danger {
+  background-color: #c0392b;
+  color: #fff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #a93226;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn-lg {
+  padding: 10px 22px;
+  font-size: 15px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+/* ----------------------------------------
+   FORM
+---------------------------------------- */
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #222;
+  background-color: #fff;
+  flex: 1;
+  min-width: 180px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #2c3e7a;
+  box-shadow: 0 0 0 2px rgba(44, 62, 122, 0.12);
+}
+
+.input option {
+  background-color: #fff;
+}
+
+
+/* ----------------------------------------
+   ALERTS
+---------------------------------------- */
+
+.alert {
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.alert-error {
+  background-color: #fdf0ee;
+  border: 1px solid #e8a09a;
+  color: #922b21;
+}
+
+.alert-success {
+  background-color: #edfaf1;
+  border: 1px solid #82c99a;
+  color: #1a6b38;
+}
+
+
+/* ----------------------------------------
+   TABLE
+---------------------------------------- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th {
+  text-align: left;
+  padding: 9px 12px;
+  background-color: #f5f5f5;
+  color: #666;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background-color: #fafafa;
+}
+
+/* row where player is eliminated */
+.disqualified-row td {
+  opacity: 0.45;
+}
+
+/* winning player name in match row */
+.winner-cell {
+  font-weight: 700;
+  color: #1a6b38;
+}
+
+/* "vs" column between player names */
+.vs-cell {
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+}
+
+/* "🏆 Name" winner label */
+.winner-label {
+  color: #7a5800;
+  font-weight: 600;
+}
+
+
+/* ----------------------------------------
+   BADGES
+---------------------------------------- */
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-pending {
+  background-color: #fef9ec;
+  border: 1px solid #f0c040;
+  color: #7a5800;
+}
+
+.badge-active {
+  background-color: #edfaf1;
+  border: 1px solid #82c99a;
+  color: #1a6b38;
+}
+
+.badge-completed {
+  background-color: #eef1f8;
+  border: 1px solid #9aaad8;
+  color: #2c3e7a;
+}
+
+.badge-disqualified {
+  background-color: #fdf0ee;
+  border: 1px solid #e8a09a;
+  color: #922b21;
+}
+
+
+/* ----------------------------------------
+   TOURNAMENT LIST  (Tournaments page)
+---------------------------------------- */
+
+.tournament-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tournament-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.tournament-item:hover {
+  border-color: #2c3e7a;
+}
+
+.tournament-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tournament-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+.round-info {
+  font-size: 13px;
+  color: #777;
+}
+
+.date {
+  font-size: 13px;
+  color: #aaa;
+}
+
+
+/* ----------------------------------------
+   TOURNAMENT DETAIL  (detail page)
+---------------------------------------- */
+
+.breadcrumb {
+  margin-bottom: 6px;
+}
+
+.breadcrumb a {
+  font-size: 13px;
+  color: #777;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: #2c3e7a;
+  text-decoration: underline;
+}
+
+.tournament-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tournament-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* "Round 3" chip next to status badge */
+.round-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #eef1f8;
+  color: #2c3e7a;
+  border: 1px solid #9aaad8;
+}
+
+/* heading + buttons on the same row */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.section-header h3 {
+  margin: 0;
+}
+
+/* bottom of card — primary action row */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.hint {
+  font-size: 13px;
+  color: #1a6b38;
+}
+
+
+/* ----------------------------------------
+   PODIUM  (results page)
+---------------------------------------- */
+
+.podium-card {
+  text-align: center;
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding-bottom: 10px;
+}
+
+.podium-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 16px 24px;
+  border-radius: 6px;
+  min-width: 150px;
+}
+
+.podium-step.first {
+  border: 2px solid #c9971f;
+  background-color: #fefaec;
+  transform: translateY(-18px);
+}
+
+.podium-step.second {
+  border: 2px solid #8a93a3;
+  background-color: #f7f8f9;
+}
+
+.podium-step.third {
+  border: 2px solid #a8631f;
+  background-color: #fdf4ec;
+}
+
+.podium-medal {
+  font-size: 28px;
+}
+
+.podium-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+}
+
+.podium-stats {
+  font-size: 13px;
+  color: #777;
+}
+
+.podium-rank {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #999;
+}
+
+
+/* ----------------------------------------
+   HOME PAGE
+---------------------------------------- */
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.hero {
+  text-align: center;
+  padding: 52px 24px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.hero-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.hero h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e7a;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.feature-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+
+.feature-card:hover {
+  border-color: #2c3e7a;
+}
+
+.feature-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.feature-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+.feature-card p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+
+/* ----------------------------------------
+   UTILITY
+---------------------------------------- */
+
+.empty {
+  font-size: 14px;
+  color: #999;
+  padding: 12px 0;
+}
+
+.loading {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  padding: 32px 0;
+}
+
+
+/* ----------------------------------------
+   RESPONSIVE  (< 600px)
+---------------------------------------- */
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 14px;
+  }
+
+  .main {
+    padding: 16px 14px;
+  }
+
+  .podium {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .podium-step.first {
+    transform: none;
+  }
+}

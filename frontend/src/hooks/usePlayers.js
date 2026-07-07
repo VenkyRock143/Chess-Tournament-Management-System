@@ -1,67 +1,109 @@
 import { useEffect, useState } from "react";
 
-import { getPlayers, createPlayer, deletePlayer } from "../api/playerApi";
+import {
+
+    getPlayers,
+
+    createPlayer,
+
+    deletePlayer
+
+} from "../api/playerApi";
+
 
 function usePlayers() {
-  const [players, setPlayers] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+    const [players, setPlayers] = useState([]);
 
-  const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
 
-  async function loadPlayers() {
-    setLoading(true);
+    const [error, setError] = useState("");
 
-    setError("");
 
-    try {
-      const data = await getPlayers();
 
-      setPlayers(data);
-    } catch (error) {
-      setError(error.message);
+    async function loadPlayers() {
+
+        setLoading(true);
+
+        setError("");
+
+        try {
+
+            const data = await getPlayers();
+
+            setPlayers(data);
+
+        } catch (error) {
+
+            setError(error.message);
+
+        }
+
+        setLoading(false);
+
     }
 
-    setLoading(false);
-  }
 
-  useEffect(function () {
-    loadPlayers();
-  }, []);
+    useEffect(function () {
 
-  async function addPlayer(player) {
-    try {
-      await createPlayer(player);
+        loadPlayers();
 
-      loadPlayers();
-    } catch (error) {
-      throw error;
+    }, []);
+
+
+
+    async function addPlayer(player) {
+
+        try {
+
+            await createPlayer(player);
+
+            loadPlayers();
+
+        } catch (error) {
+
+            throw error;
+
+        }
+
     }
-  }
 
-  async function removePlayer(id) {
-    try {
-      await deletePlayer(id);
 
-      loadPlayers();
-    } catch (error) {
-      throw error;
+
+    async function removePlayer(id) {
+
+        try {
+
+            await deletePlayer(id);
+
+            loadPlayers();
+
+        } catch (error) {
+
+            throw error;
+
+        }
+
     }
-  }
 
-  return {
-    players,
 
-    loading,
 
-    error,
+    return {
 
-    addPlayer,
+        players,
 
-    removePlayer,
+        loading,
 
-    refresh: loadPlayers,
-  };
+        error,
+
+        addPlayer,
+
+        removePlayer,
+
+        refresh: loadPlayers
+
+    };
+
 }
 
 export default usePlayers;

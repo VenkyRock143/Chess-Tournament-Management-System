@@ -147,8 +147,6 @@ class Tournament {
 
         await client.query(query, [tournamentId, round, match.player1Id]);
       } else if (match.isWildcard) {
-        // Wildcard match, the leftover player faces the
-        // best performing eliminated player instead of a bye
         const query = `
           INSERT INTO matches
           (tournament_id, round, player1_id, player2_id, is_wildcard)
@@ -203,8 +201,7 @@ class Tournament {
     await client.query(query, [tournamentId, playerId]);
   }
 
-  // Get the best eliminated player who has not used a wildcard yet
-  // "Best" means most wins, then fewest losses, in this tournament
+  // Get best eliminated player who has not used wildcard yet
   static async getTopEliminatedPlayer(client, tournamentId) {
     const query = `
       SELECT player_id

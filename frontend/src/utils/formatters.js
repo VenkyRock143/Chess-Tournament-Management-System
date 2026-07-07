@@ -8,7 +8,7 @@ export function formatDate(date) {
 
 }
 
-// Show round name
+// Show round name (tournament is always 10 players so maxRound is always 4)
 
 export function getRoundLabel(round, maxRound) {
 

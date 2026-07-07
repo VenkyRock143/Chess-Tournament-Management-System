@@ -7,7 +7,14 @@ import Alert from "../components/Alert";
 import Loading from "../components/Loading";
 
 export default function Players() {
-  const { players, loading, error, addPlayer, removePlayer } = usePlayers();
+
+  const {
+    players,
+    loading,
+    error,
+    addPlayer,
+    removePlayer
+  } = usePlayers();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,6 +25,7 @@ export default function Players() {
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(event) {
+
     event.preventDefault();
 
     setMessage("");
@@ -29,48 +37,67 @@ export default function Players() {
     }
 
     try {
+
       setSaving(true);
 
       await addPlayer({
         name,
-        email,
+        email
       });
 
       setMessage("Player added successfully.");
 
       setName("");
       setEmail("");
+
     } catch (err) {
+
       setFormError(err.message);
+
     } finally {
+
       setSaving(false);
+
     }
+
   }
 
   async function handleDelete(id, playerName) {
-    const confirmDelete = window.confirm(`Delete ${playerName}?`);
+
+    const confirmDelete = window.confirm(
+      `Delete ${playerName}?`
+    );
 
     if (!confirmDelete) {
       return;
     }
 
     try {
+
       await removePlayer(id);
 
       setMessage("Player deleted successfully.");
+
     } catch (err) {
+
       setFormError(err.message);
+
     }
+
   }
 
   return (
+
     <div className="page">
+
       <h2>Players</h2>
 
       <div className="card">
+
         <h3>Add Player</h3>
 
         <form onSubmit={handleSubmit}>
+
           <input
             className="input"
             type="text"
@@ -87,27 +114,56 @@ export default function Players() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <button className="btn btn-primary" disabled={saving}>
+          <button
+            className="btn btn-primary"
+            disabled={saving}
+          >
             {saving ? "Saving..." : "Add Player"}
           </button>
+
         </form>
 
-        {message && <Alert type="success">{message}</Alert>}
+        {message && (
+          <Alert type="success">
+            {message}
+          </Alert>
+        )}
 
-        {formError && <Alert type="error">{formError}</Alert>}
+        {formError && (
+          <Alert type="error">
+            {formError}
+          </Alert>
+        )}
+
       </div>
 
       <div className="card">
+
         <h3>Player List</h3>
 
         {loading ? (
+
           <Loading />
+
         ) : (
-          <PlayerTable players={players} onDelete={handleDelete} />
+
+          <PlayerTable
+            players={players}
+            onDelete={handleDelete}
+          />
+
         )}
 
-        {error && <Alert type="error">{error}</Alert>}
+        {error && (
+          <Alert type="error">
+            {error}
+          </Alert>
+        )}
+
       </div>
+
     </div>
+
   );
+
 }

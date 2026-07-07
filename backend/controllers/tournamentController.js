@@ -68,6 +68,22 @@ exports.deleteTournament = async function (req, res, next) {
   const id = req.params.id;
 
   try {
+    const tournament = await Tournament.findById(id);
+
+    if (!tournament) {
+      return res.status(404).json({
+        error: "Tournament not found",
+      });
+    }
+
+    // Do not allow deleting a tournament while it is active
+    if (tournament.status == "active") {
+      return res.status(400).json({
+        error:
+          "Cannot delete an active tournament. Finish or wait for it to complete first.",
+      });
+    }
+
     await Tournament.delete(id);
 
     res.json({

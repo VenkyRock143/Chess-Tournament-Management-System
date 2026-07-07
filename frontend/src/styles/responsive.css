@@ -1,6 +1,7 @@
 /* Mobile */
 
 @media (max-width: 768px) {
+
   .main {
     padding: 20px 16px;
   }
@@ -144,9 +145,11 @@
   }
 }
 
+
 /* Small phones */
 
 @media (max-width: 480px) {
+
   .main {
     padding: 16px 12px;
   }
@@ -195,4 +198,5 @@
   .badge {
     font-size: 10px;
   }
+
 }

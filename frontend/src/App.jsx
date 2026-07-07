@@ -12,21 +12,43 @@ import TournamentDetail from "./pages/TournamentDetail";
 import "./styles/index.css";
 
 export default function App() {
+
   return (
+
     <BrowserRouter>
+
       <Navbar />
 
       <div className="main">
+
         <Routes>
-          <Route path="/" element={<Home />} />
 
-          <Route path="/players" element={<Players />} />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-          <Route path="/tournaments" element={<Tournaments />} />
+          <Route
+            path="/players"
+            element={<Players />}
+          />
 
-          <Route path="/tournaments/:id" element={<TournamentDetail />} />
+          <Route
+            path="/tournaments"
+            element={<Tournaments />}
+          />
+
+          <Route
+            path="/tournaments/:id"
+            element={<TournamentDetail />}
+          />
+
         </Routes>
+
       </div>
+
     </BrowserRouter>
+
   );
+
 }

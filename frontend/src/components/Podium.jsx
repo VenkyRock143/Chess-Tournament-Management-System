@@ -1,53 +1,137 @@
 function Podium(props) {
-  return (
-    <div className="card">
-      <h3>Tournament Winners</h3>
 
-      <div className="podium">
-        {props.podium.first && (
-          <div className="podium-box first">
-            <h2>🥇</h2>
+    return (
 
-            <h3>Champion</h3>
+        <div className="card">
 
-            <p>{props.podium.first.name}</p>
+            <h3>
 
-            <p>Wins : {props.podium.first.wins}</p>
+                Tournament Winners
 
-            <p>Losses : {props.podium.first.losses}</p>
-          </div>
-        )}
+            </h3>
 
-        {props.podium.second && (
-          <div className="podium-box second">
-            <h2>🥈</h2>
+            <div className="podium">
 
-            <h3>Second Place</h3>
+                {props.podium.first && (
 
-            <p>{props.podium.second.name}</p>
+                    <div className="podium-box first">
 
-            <p>Wins : {props.podium.second.wins}</p>
+                        <h2>
 
-            <p>Losses : {props.podium.second.losses}</p>
-          </div>
-        )}
+                            🥇
 
-        {props.podium.third && (
-          <div className="podium-box third">
-            <h2>🥉</h2>
+                        </h2>
 
-            <h3>Third Place</h3>
+                        <h3>
 
-            <p>{props.podium.third.name}</p>
+                            Champion
 
-            <p>Wins : {props.podium.third.wins}</p>
+                        </h3>
 
-            <p>Losses : {props.podium.third.losses}</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                        <p>
+
+                            {props.podium.first.name}
+
+                        </p>
+
+                        <p>
+
+                            Wins : {props.podium.first.wins}
+
+                        </p>
+
+                        <p>
+
+                            Losses : {props.podium.first.losses}
+
+                        </p>
+
+                    </div>
+
+                )}
+
+                {props.podium.second && (
+
+                    <div className="podium-box second">
+
+                        <h2>
+
+                            🥈
+
+                        </h2>
+
+                        <h3>
+
+                            Second Place
+
+                        </h3>
+
+                        <p>
+
+                            {props.podium.second.name}
+
+                        </p>
+
+                        <p>
+
+                            Wins : {props.podium.second.wins}
+
+                        </p>
+
+                        <p>
+
+                            Losses : {props.podium.second.losses}
+
+                        </p>
+
+                    </div>
+
+                )}
+
+                {props.podium.third && (
+
+                    <div className="podium-box third">
+
+                        <h2>
+
+                            🥉
+
+                        </h2>
+
+                        <h3>
+
+                            Third Place
+
+                        </h3>
+
+                        <p>
+
+                            {props.podium.third.name}
+
+                        </p>
+
+                        <p>
+
+                            Wins : {props.podium.third.wins}
+
+                        </p>
+
+                        <p>
+
+                            Losses : {props.podium.third.losses}
+
+                        </p>
+
+                    </div>
+
+                )}
+
+            </div>
+
+        </div>
+
+    );
+
 }
 
 export default Podium;

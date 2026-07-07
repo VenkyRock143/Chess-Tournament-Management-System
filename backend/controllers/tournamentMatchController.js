@@ -245,9 +245,7 @@ exports.nextRound = async (req, res, next) => {
 
     let pairings;
 
-    // Odd number of players left, instead of giving someone a free
-    // bye, bring back the best performing eliminated player to fight
-    // for the spot (wildcard entry)
+    // Odd player left, get wildcard instead of a bye
     if (shuffledPlayers.length % 2 != 0) {
       const wildcardPlayerId = await Tournament.getTopEliminatedPlayer(
         client,
@@ -255,7 +253,7 @@ exports.nextRound = async (req, res, next) => {
       );
 
       if (wildcardPlayerId) {
-        // This player would have gotten the bye, now plays the wildcard
+        // this player would have gotten the bye
         const oddPlayerId = shuffledPlayers.pop();
 
         await Tournament.reactivatePlayer(
@@ -273,7 +271,7 @@ exports.nextRound = async (req, res, next) => {
           isWildcard: true,
         });
       } else {
-        // No eliminated player available to bring back, normal bye
+        // no eliminated player left, normal bye
         pairings = buildPairings(shuffledPlayers);
       }
     } else {
